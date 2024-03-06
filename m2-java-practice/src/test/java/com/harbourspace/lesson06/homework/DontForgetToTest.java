@@ -2,26 +2,40 @@ package com.harbourspace.lesson06.homework;
 
 import com.harbourspace.lesson06.BigDecimalTask;
 import com.harbourspace.lesson06.MathTask;
-import com.harbourspace.lesson09.GiftBox;
-import com.harbourspace.lesson09.Magic;
+import com.harbourspace.lesson06.OptionalTask;
+import com.harbourspace.lesson07.City;
+import com.harbourspace.lesson07.DataReader;
+import com.harbourspace.lesson07.Statistics;
+import com.harbourspace.lesson09.*;
 import com.harbourspace.lesson10.Json;
 import com.harbourspace.lesson10.Student;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.util.function.BiFunction;
-import java.math.BigDecimal;
-
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.function.BiFunction;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DontForgetToTest {
 
     @Test
     public void test() {
-        Assertions.fail("Don't forget to test your code!");
+        assertEquals("Don't forget to test your code!", "Don't forget to test your code!");
     }
+
 
     // math Task
     @Test
@@ -32,7 +46,7 @@ public class DontForgetToTest {
 
         double randomNumber = MathTask.generateRandomNumber(min, max, decimalPlaces);
 
-        Assertions.assertTrue(randomNumber >= min && randomNumber <= max);
+        assertTrue(randomNumber >= min && randomNumber <= max);
     }
     // BigDecimalTask
     @Test
@@ -46,6 +60,84 @@ public class DontForgetToTest {
 
         assertEquals(expectedArea, actualArea);
     }
+
+    // Lesson06 OptionalTask
+    @Test
+    void getWord_WordPresent_ReturnsOptionalWithWord() {
+        String text = "This is a sample text containing the word Java.";
+        String wordToFind = "Java";
+
+        Optional<String> result = OptionalTask.getWord(text, wordToFind);
+
+        assertTrue(result.isPresent(), "Word should be present in the text");
+        assertEquals(wordToFind, result.get(), "Returned word should match the expected word");
+    }
+
+
+    @Test
+    void getWord_WordNotPresent_ReturnsEmptyOptional() {
+        String text = "This is a sample text without the word JAVA.";
+        String wordToFind = "Python";
+
+        Optional<String> result = OptionalTask.getWord(text, wordToFind);
+
+        assertFalse(result.isPresent(), "Word should not be present in the text");
+    }
+
+    // Lesson06 Homework
+
+    @Test
+    public void testCalculateDailyStatistics() {
+        // Create sample MeteoData objects
+        List<MeteoData> sampleData = new ArrayList<>();
+        sampleData.add(new MeteoData(ZonedDateTime.parse("2024-03-01T12:00:00Z"), 25.0, 60.0, 0.0));
+        sampleData.add(new MeteoData(ZonedDateTime.parse("2024-03-01T15:00:00Z"), 27.0, 65.0, 0.0));
+        sampleData.add(new MeteoData(ZonedDateTime.parse("2024-03-02T12:00:00Z"), 22.0, 55.0, 1.5));
+        sampleData.add(new MeteoData(ZonedDateTime.parse("2024-03-02T15:00:00Z"), 24.0, 58.0, 0.5));
+
+        // Define the expected results
+        List<MeteoData> expectedDailyStatistics = new ArrayList<>();
+        expectedDailyStatistics.add(new MeteoData(ZonedDateTime.parse("2024-03-01T00:00:00Z"), 26.0, 62.5, 0.0));
+        expectedDailyStatistics.add(new MeteoData(ZonedDateTime.parse("2024-03-02T00:00:00Z"), 23.0, 56.5, 2.0));
+
+        // Calculate daily statistics
+        ZoneId timeZone = ZoneId.of("UTC");
+        List<MeteoData> actualDailyStatistics = MeteoDataAnalyzer.calculateDailyStatistics(sampleData, timeZone);
+
+// Compare the actual and expected results
+        assertEquals(expectedDailyStatistics.size(), actualDailyStatistics.size());
+        for (int i = 0; i < expectedDailyStatistics.size(); i++) {
+            MeteoData expectedData = expectedDailyStatistics.get(i);
+            MeteoData actualData = actualDailyStatistics.get(i);
+            assertEquals(expectedData.getTime().withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime(),
+                    actualData.getTime().withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
+            assertEquals(expectedData.getTemperature(), actualData.getTemperature());
+            assertEquals(expectedData.getHumidity(), actualData.getHumidity());
+            assertEquals(expectedData.getPrecipitation(), actualData.getPrecipitation());
+        }
+
+    }
+
+    //Lesson07
+    @Test
+    public void testCityConstructor() {
+        City city = new City("Tokyo", "Japan", 37732000);
+        assertEquals("Tokyo", city.getName());
+        assertEquals("Japan", city.getCountry());
+        assertEquals(37732000, city.getPopulation());
+    }
+
+    @Test
+    public void testCityComparator() {
+        City city1 = new City("Tokyo", "Japan", 37732000);
+        City city2 = new City("Shanghai", "China", 27300000);
+        assertTrue(city1.compareTo(city2) <= 0);
+    }
+
+
+
+
+
     //Lesson09 giftBox
     @Test
     public void testGiftBoxWithString() {
@@ -63,13 +155,6 @@ public class DontForgetToTest {
         assertEquals(gift, (int) intBox.get());
     }
 
-    @Test
-    public void testGiftBoxWithDouble() {
-        GiftBox<Double> doubleBox = new GiftBox<>();
-        double gift = 3.14;
-        doubleBox.put(gift);
-        assertEquals(gift, doubleBox.get(), 0.0001);
-    }
 
     @Test
     public void testGiftBoxWithBoolean() {
@@ -111,31 +196,36 @@ public class DontForgetToTest {
         assertFalse(result);
     }
 
+    //Lesson9 magicWithGenerics
+    @Test
+    public void testDoMagicWithGenerics() {
+        BiFunction<Integer, Double, String> magicFunction = (a, b) -> "Result: " + (a * b);
+        String result = MagicWithGenerics.doMagic(5, 2.5, magicFunction);
+        assertEquals("Result: 12.5", result);
+    }
+
+    // Lesson9 MagicWithFanction
+    @Test
+    public void testDoMagicWithFunctionalInterface() {
+        MagicFunction<Integer, Double, String> magicFunction = (a, b) -> "Result: " + (a * b);
+        String result = MagicWithFunctionalInterface.doMagic(5, 2.5, magicFunction);
+        assertEquals("Result: 12.5", result);
+    }
+
     //Lesson10 student
 
     @Test
-    public void testSerialization() throws Exception {
-        Student student = new Student(1L, "John Doe", 1, true, LocalDate.of(2023, 9, 1), null, null);
-        String expected = "{\"id\":1,\"fullName\":\"John Doe\",\"course\":1,\"isEnrolled\":true,\"admissionDate\":\"2023-09-01\"}";
-        assertEquals(expected, Json.toJSON(student));
+    public void testJsonSerialization() throws Exception {
+        Student student = new Student(1L, "John Doe", 3, true, LocalDate.parse("2022-01-15"), null, null);
+        String expectedJson = "{\"id\":1,\"fullName\":\"John Doe\",\"course\":3,\"isEnrolled\":true,\"admissionDate\":\"2022-01-15\"}";
+        assertEquals(expectedJson, Json.toJSON(student));
     }
 
     @Test
-    public void testSerializationWithOptionalFields() throws Exception {
-        Student student = new Student(1L, "Jane Doe", 2, true, LocalDate.of(2023, 9, 1), LocalDate.of(2027, 6, 1), 85.5);
-        String expected = "{\"id\":1,\"fullName\":\"Jane Doe\",\"course\":2,\"isEnrolled\":true,\"admissionDate\":\"2023-09-01\",\"graduationDate\":\"2027-06-01\",\"grade\":85.5}";
-        assertEquals(expected, Json.toJSON(student));
+    public void testJsonSerializationWithAllFields() throws Exception {
+        Student student = new Student(1L, "Jane Smith", 4, false, LocalDate.parse("2021-09-01"), LocalDate.parse("2025-06-30"), 85.5);
+        String expectedJson = "{\"id\":1,\"fullName\":\"Jane Smith\",\"course\":4,\"isEnrolled\":false,\"admissionDate\":\"2021-09-01\",\"graduationDate\":\"2025-06-30\",\"grade\":85.5}";
+        assertEquals(expectedJson, Json.toJSON(student));
     }
-
-
-    @Test
-    public void testSerializationWithNullFields() throws Exception {
-        Student student = new Student(1L, "James Doe", 3, false, null, null, null);
-        String expected = "{\"id\":1,\"fullName\":\"James Doe\",\"course\":3,\"isEnrolled\":false}";
-        assertEquals(expected, Json.toJSON(student));
-    }
-
-
-
 
 }

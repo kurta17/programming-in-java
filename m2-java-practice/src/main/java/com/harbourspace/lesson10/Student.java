@@ -2,7 +2,6 @@ package com.harbourspace.lesson10;
 
 import java.time.LocalDate;
 
-
 public class Student {
     Long id;
     String fullName;
@@ -22,8 +21,33 @@ public class Student {
         this.grade = grade;
     }
 
+    // Getters for private fields to be used in tests
+    public Long getId() {
+        return id;
+    }
 
+    public String getFullName() {
+        return fullName;
+    }
 
+    public Integer getCourse() {
+        return course;
+    }
+
+    public Boolean getIsEnrolled() {
+        return isEnrolled;
+    }
+
+    public LocalDate getAdmissionDate() {
+        return admissionDate;
+    }
+
+    public LocalDate getGraduationDate() {
+        return graduationDate;
+    }
+
+    public Double getGrade() {
+        return grade;
+    }
 }
-
 

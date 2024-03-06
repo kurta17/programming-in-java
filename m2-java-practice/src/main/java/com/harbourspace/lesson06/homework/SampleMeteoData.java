@@ -1,10 +1,12 @@
 package com.harbourspace.lesson06.homework;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SampleMeteoData {
-
     public static final List<MeteoData> DATA = List.of(
             new MeteoData(ZonedDateTime.parse("2023-12-31T23:57:02Z[UTC]"), 30.5, 52.0, 0.5),
             new MeteoData(ZonedDateTime.parse("2024-01-01T15:22:01Z[UTC]"), 24.0, 97.0, 0.0),
@@ -162,5 +164,20 @@ public class SampleMeteoData {
             new MeteoData(ZonedDateTime.parse("2024-01-30T18:56:29Z[UTC]"), 23.0, 49.0, 0.5),
             new MeteoData(ZonedDateTime.parse("2024-01-31T06:22:57Z[UTC]"), 25.0, 97.5, 0.0)
     );
+
+    public static List<MeteoData> calculateDailyStatistics(ZoneId zoneId) {
+        return DATA.stream()
+                .map(data -> data.withNewTime(data.getTime().withZoneSameInstant(zoneId).truncatedTo(ChronoUnit.DAYS)))
+                .collect(Collectors.groupingBy(MeteoData::getTime))
+                .entrySet().stream()
+                .map(entry -> {
+                    double avgTemperature = entry.getValue().stream().collect(Collectors.averagingDouble(MeteoData::getTemperature));
+                    double avgHumidity = entry.getValue().stream().collect(Collectors.averagingDouble(MeteoData::getHumidity));
+                    double sumPrecipitation = entry.getValue().stream().mapToDouble(MeteoData::getPrecipitation).sum();
+                    return new MeteoData(entry.getKey(), avgTemperature, avgHumidity, sumPrecipitation);
+                })
+                .sorted()
+                .collect(Collectors.toList());
+    }
 
 }
