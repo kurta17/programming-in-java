@@ -4,7 +4,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
 }
 
-
 group = "com.motycka"
 version = "1.0-SNAPSHOT"
 
@@ -17,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
     implementation("org.springframework.boot:spring-boot-starter-data-rest")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-json")

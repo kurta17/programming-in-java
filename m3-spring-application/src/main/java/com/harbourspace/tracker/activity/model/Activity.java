@@ -1,6 +1,4 @@
-package com.harbourspace.tracker.activity;
-
-import java.sql.SQLException;
+package com.harbourspace.tracker.activity.model;
 
 public record Activity(
         Long id,
