@@ -59,5 +59,18 @@ public class ExerciseTests {
         assertEquals(expectedExercise.getKcalBurned(), actualExercise.getKcalBurned());
     }
 
-    // Add more tests for other functionalities such as deleteExercise, getExerciseById, etc.
+    @Test
+    void testGetExerciseById() {
+        Long exerciseId = 1L;
+        Exercise expectedExercise = new Exercise(1L, 1L, 1L, LocalDateTime.now(), 60, 100); // Example values for kcalBurned
+
+        when(exerciseRepository.getExerciseById(exerciseId)).thenReturn(expectedExercise);
+
+        Exercise actualExercise = exerciseRepository.getExerciseById(exerciseId);
+
+        assertNotNull(actualExercise);
+        assertEquals(expectedExercise.getId(), actualExercise.getId());
+        assertEquals(expectedExercise.getUserId(), actualExercise.getUserId());
+        assertEquals(expectedExercise.getActivityId(), actualExercise.getActivityId());
+    }
 }

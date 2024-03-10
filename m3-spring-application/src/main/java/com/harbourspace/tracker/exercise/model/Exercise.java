@@ -20,6 +20,7 @@ public class Exercise {
     }
 
 
+
     public Long getId() {
         return id;
     }

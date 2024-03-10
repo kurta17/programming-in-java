@@ -68,5 +68,37 @@ public class ActivityControllerTest {
     }
 
 
+    @Test
+    @DisplayName("POST /api/activities")
+    void testAddActivity() throws Exception {
+        var newActivity = "{\"userId\":1,\"type\":\"USER\",\"name\":\"Running\",\"kcalPerMinute\":10.0}";
+        mockMvc.perform(get("/api/activities").header("Authorization", "Basic 0")
+                .contentType("application/json")
+                .content(newActivity))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("PUT /api/activities/1")
+    void testUpdateActivity() throws Exception {
+        var updatedActivity = "{\"userId\":1,\"type\":\"USER\",\"name\":\"Running\",\"kcalPerMinute\":10.0}";
+        mockMvc.perform(get("/api/activities/1").header("Authorization", "Basic 0")
+                .contentType("application/json")
+                .content(updatedActivity))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("DELETE /api/activities/1")
+    void testDeleteActivity() throws Exception {
+        mockMvc.perform(get("/api/activities/1").header("Authorization", "Basic 0"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+
 
 }

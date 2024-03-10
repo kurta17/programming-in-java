@@ -1,29 +1,30 @@
-create table if not exists users
+CREATE TABLE IF NOT EXISTS users
 (
-    id bigint auto_increment primary key,
-    name text not null
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
-create table if not exists activity
+CREATE TABLE IF NOT EXISTS activity
 (
-    id bigint auto_increment primary key,
-    user_id bigserial references users(id) on delete cascade,
-    type text not null,
-    name text not null,
-    kcal_per_minute decimal not null,
-    unique (user_id, name)
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    kcal_per_minute DECIMAL NOT NULL,
+    UNIQUE (user_id, name)
 );
 
-create table if not exists exercise
+CREATE TABLE IF NOT EXISTS exercise
 (
-    id bigint auto_increment primary key,
-    user_id bigint not null references users(id) on delete cascade,
-    activity_id bigint not null references activity(id),
-    start_time timestamp not null,
-    duration bigint not null
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    activity_id BIGINT NOT NULL REFERENCES activity(id),
+    start_time TIMESTAMP NOT NULL,
+    duration BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS exercises (
+CREATE TABLE IF NOT EXISTS exercises
+(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     activity_id BIGINT NOT NULL,
@@ -31,6 +32,5 @@ CREATE TABLE IF NOT EXISTS exercises (
     duration INT NOT NULL,
     kcal_burned DOUBLE,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (activity_id) REFERENCES activities(id)
+    FOREIGN KEY (activity_id) REFERENCES activity(id)
 );
-

@@ -5,10 +5,11 @@ import com.harbourspace.tracker.exercise.model.NewExercise;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 @Repository
@@ -23,8 +24,18 @@ public class ExerciseJdbcRepository {
 
     public Exercise addExercise(NewExercise newExercise) {
         String query = "INSERT INTO exercise (user_id, activity_id, start_time, duration) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(query, newExercise.getUserId(), newExercise.getActivityId(), newExercise.getStartTime(), newExercise.getDuration());
-        Long generatedId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, newExercise.getUserId());
+            ps.setLong(2, newExercise.getActivityId());
+            ps.setTimestamp(3, Timestamp.valueOf(newExercise.getStartTime()));
+            ps.setInt(4, newExercise.getDuration());
+            return ps;
+        }, keyHolder);
+
+        Long generatedId = (Long) keyHolder.getKey();
         return getExerciseById(generatedId);
     }
 

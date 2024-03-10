@@ -46,4 +46,57 @@ public class ExerciseJdbcServiceTest {
     }
 
     // Add more test methods for other service methods
+
+    @Test
+    public void testGetExerciseById() {
+        // Mock dependencies
+        Exercise mockExercise = new Exercise(1L, 1L, 1L, LocalDateTime.now(), 60, 0.0);
+        when(exerciseRepository.getExerciseById(1L)).thenReturn(mockExercise);
+
+        // Call service method
+        Exercise actualExercise = exerciseService.getExerciseById(1L);
+
+        // Verify repository method was called
+        verify(exerciseRepository).getExerciseById(1L);
+
+
+    }
+    @Test
+    public void testGetAllExercisesByUserId() {
+        // Mock dependencies
+        List<Exercise> mockExercises = List.of(
+                new Exercise(1L, 1L, 1L, LocalDateTime.now(), 60, 0.0),
+                new Exercise(2L, 1L, 1L, LocalDateTime.now(), 60, 0.0),
+                new Exercise(3L, 1L, 1L, LocalDateTime.now(), 60, 0.0)
+        );
+        when(exerciseRepository.getAllExercisesByUserId(1L)).thenReturn(mockExercises);
+
+        // Call service method
+        List<Exercise> actualExercises = exerciseService.getAllExercisesByUserId(1L);
+
+        // Verify repository method was called
+        verify(exerciseRepository).getAllExercisesByUserId(1L);
+
+        // Add more assertions if needed
+    }
+
+    @Test
+    public void testGetExercisesByUserIdAndActivityId() {
+        // Mock dependencies
+        List<Exercise> mockExercises = List.of(
+                new Exercise(1L, 1L, 1L, LocalDateTime.now(), 60, 0.0),
+                new Exercise(2L, 1L, 1L, LocalDateTime.now(), 60, 0.0),
+                new Exercise(3L, 1L, 1L, LocalDateTime.now(), 60, 0.0)
+        );
+        when(exerciseRepository.getExercisesByUserIdAndActivityId(1L, 1L)).thenReturn(mockExercises);
+
+        // Call service method
+        List<Exercise> actualExercises = exerciseService.getExercisesByUserIdAndActivityId(1L, 1L);
+
+        // Verify repository method was called
+        verify(exerciseRepository).getExercisesByUserIdAndActivityId(1L, 1L);
+
+    }
+
+
 }
